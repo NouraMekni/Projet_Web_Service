@@ -1,23 +1,33 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
-import { User } from '../user/user.entity';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
+import { User, UserRole } from '../user/user.entity'; // Import UserRole
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private prisma: PrismaService) {}
 
   @Query(() => String)
-  health() {
-    return 'GraphQL is working 🚀';
+  sayHello(): string {
+    return 'Auth Service is running!';
   }
 
   @Mutation(() => User)
-  register(@Args('email') email: string, @Args('password') password: string) {
-    return this.authService.register(email, password);
-  }
+  async register(
+    @Args('email') email: string,
+    @Args('password') password: string,
+    // Use the enum type here instead of string
+    @Args('role', { type: () => UserRole, defaultValue: UserRole.OPERATOR })
+    role: UserRole,
+  ) {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  @Mutation(() => String)
-  login(@Args('email') email: string, @Args('password') password: string) {
-    return this.authService.login(email, password);
+    return this.prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role: role,
+      },
+    });
   }
 }
