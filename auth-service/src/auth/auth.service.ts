@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   async register(email: string, password: string, role: Role) {
-    // check if user already exists
+    // check if user exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -25,10 +25,8 @@ export class AuthService {
       throw new ConflictException('User already exists');
     }
 
-    // hash password
     const hashed = await bcrypt.hash(password, 10);
 
-    // create user in DB
     const user = await this.prisma.user.create({
       data: {
         email,
@@ -37,7 +35,12 @@ export class AuthService {
       },
     });
 
-    return user;
+    // ❌ NEVER return password
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
   }
 
   async login(email: string, password: string) {
@@ -46,13 +49,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      throw new UnauthorizedException('Wrong password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = {

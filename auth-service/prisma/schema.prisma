@@ -21,3 +21,21 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum VehicleStatus {
+  IN_TRAFFIC
+  PARKED
+  MAINTENANCE
+}
+
+model Vehicle {
+  id           Int           @id @default(autoincrement())
+  brand        String
+  model        String
+  licensePlate String        @unique
+  status       VehicleStatus @default(PARKED)
+
+  ownerId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

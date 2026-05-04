@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 type GqlContext = {
-  req: Request;
+  req: Request & { user?: any };
 };
 
 @Injectable()
