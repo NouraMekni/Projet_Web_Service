@@ -1,11 +1,12 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
-import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { User, UserRole } from '../user/user.entity'; // Import UserRole
+import { AuthService } from './auth.service';
+import { User, Role } from '../user/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
   sayHello(): string {
@@ -13,21 +14,27 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  async register(
+  register(
     @Args('email') email: string,
     @Args('password') password: string,
-    // Use the enum type here instead of string
-    @Args('role', { type: () => UserRole, defaultValue: UserRole.OPERATOR })
-    role: UserRole,
+    @Args('role', { type: () => Role, defaultValue: Role.OPERATOR })
+    role: Role,
   ) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    return this.authService.register(email, password, role);
+  }
 
-    return this.prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        role: role,
-      },
-    });
+  @Mutation(() => String)
+  async login(
+    @Args('email') email: string,
+    @Args('password') password: string,
+  ) {
+    const result = await this.authService.login(email, password);
+    return result.access_token;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => String)
+  protectedData() {
+    return 'You are authenticated!';
   }
 }

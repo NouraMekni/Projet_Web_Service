@@ -1,41 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-
-type User = {
-  id: number;
-  email: string;
-  password: string;
-  role: string;
-};
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  private users: User[] = [];
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async register(email: string, password: string) {
+  async register(email: string, password: string, role: Role) {
+    // check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('User already exists');
+    }
+
+    // hash password
     const hashed = await bcrypt.hash(password, 10);
 
-    const user: User = {
-      id: Date.now(),
-      email,
-      password: hashed,
-      role: 'OPERATOR',
-    };
+    // create user in DB
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        password: hashed,
+        role,
+      },
+    });
 
-    this.users.push(user);
     return user;
   }
 
   async login(email: string, password: string) {
-    const user = this.users.find((u) => u.email === email);
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-    if (!user) throw new Error('User not found');
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error('Wrong password');
+
+    if (!match) {
+      throw new UnauthorizedException('Wrong password');
+    }
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
 
     return {
-      access_token: 'FAKE_JWT',
+      access_token: this.jwtService.sign(payload),
     };
   }
 }

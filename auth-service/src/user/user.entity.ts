@@ -1,14 +1,12 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 
-// This tells GraphQL about your Roles
-export enum UserRole {
+export enum Role {
   ADMIN = 'ADMIN',
   OPERATOR = 'OPERATOR',
 }
 
-// Register the enum so GraphQL recognizes it
-registerEnumType(UserRole, {
-  name: 'UserRole',
+registerEnumType(Role, {
+  name: 'Role',
 });
 
 @ObjectType()
@@ -19,9 +17,8 @@ export class User {
   @Field()
   email!: string;
 
-  @Field(() => UserRole) // Use the Enum here for better validation
-  role!: UserRole;
+  @Field(() => Role)
+  role!: Role;
 
-  // No @Field() here because we never want to expose passwords in GraphQL
   password!: string;
 }
