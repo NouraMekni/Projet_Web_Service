@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { TraficModule } from './trafic/trafic.module';
+import { IncidentModule } from './incident/incident.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TraficModule } from './trafic/trafic.module';
     PrismaModule,
     VehicleModule,
     TraficModule,
+    IncidentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
