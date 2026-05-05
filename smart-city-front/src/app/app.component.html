@@ -1,0 +1,14 @@
+﻿<nav *ngIf="isLoggedIn" class="navbar">
+  <div class="nav-brand">
+    <h2>🌆 Smart City</h2>
+  </div>
+  <div class="nav-menu">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a (click)="logout()" style="cursor: pointer;">Logout</a>
+  </div>
+  <div class="nav-user" *ngIf="userEmail">
+    <span>👋 {{ userEmail }}</span>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

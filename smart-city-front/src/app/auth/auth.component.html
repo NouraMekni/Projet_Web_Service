@@ -1,0 +1,54 @@
+<div class="auth-container">
+    <div class="auth-left">
+        <div class="auth-hero">
+            <h1>🌆 Smart City</h1>
+            <p>Manage traffic, incidents, users and city services efficiently.</p>
+            <div class="features">
+                <div class="feature">
+                    <span>🚦</span>
+                    <span>Real-time Traffic</span>
+                </div>
+                <div class="feature">
+                    <span>⚠️</span>
+                    <span>Incident Management</span>
+                </div>
+                <div class="feature">
+                    <span>👥</span>
+                    <span>User Management</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-card">
+            <h2>{{ isLogin ? 'Welcome Back' : 'Create Account' }}</h2>
+            <p class="subtitle">{{ isLogin ? 'Login to access your dashboard' : 'Register to get started' }}</p>
+
+            <div class="input-group">
+                <input type="email" placeholder="Email address" [(ngModel)]="email" [disabled]="isLoading"
+                    autocomplete="email" />
+            </div>
+
+            <div class="input-group">
+                <input type="password" placeholder="Password" [(ngModel)]="password" [disabled]="isLoading"
+                    autocomplete="current-password" />
+            </div>
+
+            <div class="input-group" *ngIf="!isLogin">
+                <select [(ngModel)]="role" [disabled]="isLoading">
+                    <option value="OPERATOR">👤 OPERATOR</option>
+                    <option value="ADMIN">👑 ADMIN</option>
+                </select>
+            </div>
+
+            <button class="submit-btn" (click)="submit()" [disabled]="isLoading">
+                {{ isLoading ? 'Processing...' : (isLogin ? 'Login' : 'Register') }}
+            </button>
+
+            <p class="switch-mode" (click)="!isLoading && toggleMode()">
+                {{ isLogin ? "Don't have an account? Register" : 'Already have an account? Login' }}
+            </p>
+        </div>
+    </div>
+</div>

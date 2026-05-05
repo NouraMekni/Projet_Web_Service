@@ -1,0 +1,52 @@
+﻿<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h1>🌆 Smart City</h1>
+            <h2>Create Account</h2>
+            <p>Join us to manage your city efficiently</p>
+        </div>
+
+        <form (ngSubmit)="register()">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required
+                    [disabled]="isLoading" />
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <div class="password-input">
+                    <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
+                        placeholder="Create a password (min 6 characters)" required [disabled]="isLoading" />
+                    <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                        {{ showPassword ? '🙈' : '👁️' }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <div class="password-input">
+                    <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword"
+                        name="confirmPassword" placeholder="Confirm your password" required [disabled]="isLoading" />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Role</label>
+                <select [(ngModel)]="role" name="role" [disabled]="isLoading">
+                    <option value="OPERATOR">👤 OPERATOR - Standard access</option>
+                    <option value="ADMIN">👑 ADMIN - Full access</option>
+                </select>
+            </div>
+
+            <button type="submit" class="register-btn" [disabled]="isLoading">
+                {{ isLoading ? 'Creating account...' : 'Register' }}
+            </button>
+
+            <div class="login-link">
+                Already have an account? <a routerLink="/login">Login here</a>
+            </div>
+        </form>
+    </div>
+</div>

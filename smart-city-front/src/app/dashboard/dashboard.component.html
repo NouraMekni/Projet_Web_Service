@@ -1,0 +1,77 @@
+﻿<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            <h1>Welcome back, {{ userEmail }}! 👋</h1>
+            <p>Here's what's happening with your city today.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats" (click)="navigateTo(stat.label)">
+            <div class="stat-icon">{{ stat.icon }}</div>
+            <div class="stat-info">
+                <h3>{{ stat.value }}</h3>
+                <p>{{ stat.label }}</p>
+                <span class="stat-change" [class.positive]="stat.change.startsWith('+')"
+                    [class.negative]="stat.change.startsWith('-')">
+                    {{ stat.change }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>Recent Activity</h3>
+            <div class="activity-list">
+                <div class="activity-item" *ngFor="let activity of recentActivities">
+                    <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
+                    <div class="activity-details">
+                        <p class="action">{{ activity.action }}</p>
+                        <small class="time">{{ activity.time }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="action-btn" (click)="navigateTo('users')">
+                    <span>👥</span> Manage Users
+                </button>
+                <button class="action-btn" (click)="navigateTo('incidents')">
+                    <span>⚠️</span> View Incidents
+                </button>
+                <button class="action-btn" (click)="navigateTo('traffic')">
+                    <span>🚦</span> Traffic Control
+                </button>
+                <button class="action-btn" (click)="navigateTo('reports')">
+                    <span>📊</span> Generate Reports
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card full-width">
+        <h3>System Status</h3>
+        <div class="status-grid">
+            <div class="status-item">
+                <span class="status-label">API Server</span>
+                <span class="status-value online">🟢 Online</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Database</span>
+                <span class="status-value online">🟢 Connected</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Last Backup</span>
+                <span class="status-value">📅 2 hours ago</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Uptime</span>
+                <span class="status-value">✅ 99.9%</span>
+            </div>
+        </div>
+    </div>
+</div>
