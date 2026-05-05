@@ -12,6 +12,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { TraficModule } from './trafic/trafic.module';
 import { IncidentModule } from './incident/incident.module';
+import { NotifModule } from './notif_Socket/notif.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { IncidentModule } from './incident/incident.module';
     VehicleModule,
     TraficModule,
     IncidentModule,
+    NotifModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

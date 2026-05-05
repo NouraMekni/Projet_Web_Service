@@ -94,3 +94,11 @@ model Incident {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  userId    Int
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
