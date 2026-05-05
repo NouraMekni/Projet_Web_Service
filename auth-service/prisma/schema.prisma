@@ -34,8 +34,37 @@ model Vehicle {
   model        String
   licensePlate String        @unique
   status       VehicleStatus @default(PARKED)
+  ownerId      Int
 
-  ownerId   Int
+  positions Position[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Position {
+  id        Int      @id @default(autoincrement())
+  latitude  Float
+  longitude Float
+  timestamp DateTime @default(now())
+
+  vehicleId Int
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+}
+
+enum TrafficLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model TrafficZone {
+  id        Int          @id @default(autoincrement())
+  name      String       @unique
+  latitude  Float?
+  longitude Float?
+  density   Int          @default(0)
+  status    TrafficLevel @default(LOW)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }

@@ -10,6 +10,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { VehicleModule } from './vehicle/vehicle.module';
+import { TraficModule } from './trafic/trafic.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { VehicleModule } from './vehicle/vehicle.module';
     AuthModule,
     PrismaModule,
     VehicleModule,
+    TraficModule,
   ],
   controllers: [AppController],
   providers: [AppService],

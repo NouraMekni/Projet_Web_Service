@@ -1,4 +1,10 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  ObjectType,
+  ID,
+  Float,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 export enum VehicleStatus {
   IN_TRAFFIC = 'IN_TRAFFIC',
@@ -7,6 +13,21 @@ export enum VehicleStatus {
 }
 
 registerEnumType(VehicleStatus, { name: 'VehicleStatus' });
+
+@ObjectType()
+export class Position {
+  @Field(() => ID)
+  id!: number;
+
+  @Field(() => Float)
+  latitude!: number;
+
+  @Field(() => Float)
+  longitude!: number;
+
+  @Field()
+  timestamp!: Date;
+}
 
 @ObjectType()
 export class Vehicle {
@@ -27,4 +48,8 @@ export class Vehicle {
 
   @Field()
   ownerId!: number;
+
+  // IMPORTANT: GraphQL only declares field
+  @Field(() => [Position], { nullable: true })
+  positions?: Position[];
 }
