@@ -3,7 +3,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { IncidentManagementComponent } from '../operator/incident-management/incident-management.component';
+import { IncidentManagementComponent } from './operator/incident-management/incident-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,7 +26,7 @@ export const routes: Routes = [
   {
     path: 'operator-dashboard',
     loadComponent: () =>
-      import('../operator/operator-dashboard/operator-dashboard.component').then(
+      import('./operator/operator-dashboard/operator-dashboard.component').then(
         (m) => m.OperatorDashboardComponent,
       ),
     canActivate: [AuthGuard, RoleGuard],
@@ -37,7 +37,7 @@ export const routes: Routes = [
   {
     path: 'operator/vehicles',
     loadComponent: () =>
-      import('../operator/vehicle-management/vehicle-management.component').then(
+      import('./operator/vehicle-management/vehicle-management.component').then(
         (m) => m.VehicleManagementComponent,
       ),
     canActivate: [AuthGuard, RoleGuard],

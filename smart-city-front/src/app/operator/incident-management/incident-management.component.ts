@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {
   GraphqlService,
   IncidentService,
-} from '../../app/services/incident.service';
+} from '../../services/incident.service';
 
 @Component({
   selector: 'app-incident-management',
