@@ -8,19 +8,16 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 export class VehicleResolver {
   constructor(private vehicleService: VehicleService) {}
 
-  // 📌 Get all vehicles
   @Query(() => [Vehicle])
   async vehicles() {
     return this.vehicleService.findAll();
   }
 
-  // 📌 Get one vehicle (IMPORTANT)
   @Query(() => Vehicle, { nullable: true })
   async vehicle(@Args('id', { type: () => Int }) id: number) {
     return this.vehicleService.getVehicleById(id);
   }
 
-  // 📌 Create vehicle
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Vehicle)
   async createVehicle(
@@ -31,10 +28,6 @@ export class VehicleResolver {
   ) {
     const user = context.req.user;
 
-    if (user.role !== 'ADMIN') {
-      throw new ForbiddenException('Only ADMIN can create vehicles');
-    }
-
     return this.vehicleService.create({
       brand,
       model,
@@ -43,7 +36,6 @@ export class VehicleResolver {
     });
   }
 
-  // 📌 Add position
   @Mutation(() => Boolean)
   async addPosition(
     @Args('vehicleId', { type: () => Int }) vehicleId: number,
@@ -51,6 +43,46 @@ export class VehicleResolver {
     @Args('lng') lng: number,
   ) {
     await this.vehicleService.recordPosition(vehicleId, lat, lng);
+    return true;
+  }
+
+  // Add these to your VehicleResolver class
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Vehicle)
+  async updateVehicle(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('brand') brand: string,
+    @Args('model') model: string,
+    @Args('licensePlate') licensePlate: string,
+    @Context() context: any,
+  ) {
+    const user = context.req.user;
+
+    // Check if vehicle belongs to user
+    const vehicle = await this.vehicleService.getVehicleById(id);
+    if (!vehicle || vehicle.ownerId !== user.sub) {
+      throw new ForbiddenException("You don't own this vehicle");
+    }
+
+    return this.vehicleService.update(id, { brand, model, licensePlate });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Boolean)
+  async deleteVehicle(
+    @Args('id', { type: () => Int }) id: number,
+    @Context() context: any,
+  ) {
+    const user = context.req.user;
+
+    // Check if vehicle belongs to user
+    const vehicle = await this.vehicleService.getVehicleById(id);
+    if (!vehicle || vehicle.ownerId !== user.sub) {
+      throw new ForbiddenException("You don't own this vehicle");
+    }
+
+    await this.vehicleService.delete(id);
     return true;
   }
 }

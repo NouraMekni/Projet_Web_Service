@@ -14,12 +14,13 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
   password  String
-  role      Role     @default(OPERATOR)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role       @default(OPERATOR)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  incidents Incident[]
 }
 
 enum VehicleStatus {
@@ -38,8 +39,9 @@ model Vehicle {
 
   positions Position[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  incidents Incident[]
 }
 
 model Position {
@@ -90,6 +92,12 @@ model Incident {
   latitude    Float?
   longitude   Float?
   description String?
+
+  reportedById Int
+  reportedBy   User @relation(fields: [reportedById], references: [id])
+
+  vehicleId Int?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

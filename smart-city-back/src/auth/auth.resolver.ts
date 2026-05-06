@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { User, Role } from '../user/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt.guard';
+import { AuthResponse } from './AuthResponse';
 
 @Resolver()
 export class AuthResolver {
@@ -23,13 +24,18 @@ export class AuthResolver {
     return this.authService.register(email, password, role);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => AuthResponse)
   async login(
     @Args('email') email: string,
     @Args('password') password: string,
   ) {
     const result = await this.authService.login(email, password);
-    return result.access_token;
+
+    return {
+      access_token: result.access_token,
+      role: result.role,
+      email: result.email,
+    };
   }
 
   @UseGuards(JwtAuthGuard)

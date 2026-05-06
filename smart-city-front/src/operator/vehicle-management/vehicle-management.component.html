@@ -1,0 +1,164 @@
+<div class="vehicles-container">
+    <!-- Header with Back Button -->
+    <div class="page-header">
+        <button class="btn-back" (click)="goBack()">
+            ← Back to Dashboard
+        </button>
+        <h1>🚗 Vehicle Management</h1>
+        <button class="btn-primary" (click)="openAddModal()">
+            + Add New Vehicle
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Loading vehicles...</p>
+    </div>
+
+    <!-- Vehicles Grid -->
+    <div class="vehicles-grid" *ngIf="!isLoading">
+        <div class="vehicle-card" *ngFor="let vehicle of vehicles">
+            <div class="vehicle-header">
+                <div>
+                    <h3>{{ vehicle.brand }} {{ vehicle.model }}</h3>
+                    <span class="license-plate">{{ vehicle.licensePlate }}</span>
+                </div>
+                <span class="status-badge" [class]="vehicle.status?.toLowerCase() || 'active'">
+                    {{ vehicle.status || 'ACTIVE' }}
+                </span>
+            </div>
+
+            <div class="vehicle-details">
+                <p><strong>ID:</strong> {{ vehicle.id }}</p>
+                <p><strong>Owner ID:</strong> {{ vehicle.ownerId }}</p>
+            </div>
+
+            <div class="vehicle-actions">
+                <button class="btn-edit" (click)="openEditModal(vehicle)">
+                    ✏️ Edit
+                </button>
+                <button class="btn-location" (click)="openPositionModal(vehicle)">
+                    📍 Add Position
+                </button>
+                <button class="btn-delete" (click)="deleteVehicle(vehicle.id)">
+                    🗑️ Delete
+                </button>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="vehicles.length === 0">
+            <p>🚫 No vehicles found</p>
+            <p>Click "Add New Vehicle" to get started.</p>
+        </div>
+    </div>
+
+    <!-- Add Vehicle Modal -->
+    <div class="modal" *ngIf="showAddModal" (click)="closeAddModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Add New Vehicle</h2>
+                <button class="close-btn" (click)="closeAddModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Brand *</label>
+                    <input type="text" [(ngModel)]="newVehicle.brand" placeholder="e.g., Toyota, Ford, Tesla"
+                        autofocus />
+                </div>
+
+                <div class="form-group">
+                    <label>Model *</label>
+                    <input type="text" [(ngModel)]="newVehicle.model" placeholder="e.g., Camry, F-150, Model 3" />
+                </div>
+
+                <div class="form-group">
+                    <label>License Plate *</label>
+                    <input type="text" [(ngModel)]="newVehicle.licensePlate" placeholder="e.g., ABC-1234"
+                        (keyup.enter)="addVehicle()" />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeAddModal()">Cancel</button>
+                <button class="btn-primary" (click)="addVehicle()">Add Vehicle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Vehicle Modal -->
+    <div class="modal" *ngIf="showEditModal" (click)="closeEditModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Edit Vehicle</h2>
+                <button class="close-btn" (click)="closeEditModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Brand *</label>
+                    <input type="text" [(ngModel)]="editVehicle.brand" />
+                </div>
+
+                <div class="form-group">
+                    <label>Model *</label>
+                    <input type="text" [(ngModel)]="editVehicle.model" />
+                </div>
+
+                <div class="form-group">
+                    <label>License Plate *</label>
+                    <input type="text" [(ngModel)]="editVehicle.licensePlate" />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeEditModal()">Cancel</button>
+                <button class="btn-primary" (click)="updateVehicle()">Update Vehicle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Position Modal -->
+    <div class="modal" *ngIf="showPositionModal" (click)="closePositionModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>📍 Add Position</h2>
+                <button class="close-btn" (click)="closePositionModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="vehicle-info">
+                    Vehicle: <strong>{{ selectedVehicle?.brand }} {{ selectedVehicle?.model }}</strong>
+                    ({{ selectedVehicle?.licensePlate }})
+                </p>
+
+                <div class="form-group">
+                    <label>Latitude *</label>
+                    <input type="number" step="any" [(ngModel)]="position.lat" placeholder="e.g., 40.7128" />
+                </div>
+
+                <div class="form-group">
+                    <label>Longitude *</label>
+                    <input type="number" step="any" [(ngModel)]="position.lng" placeholder="e.g., -74.0060" />
+                </div>
+
+                <div class="info-box">
+                    <p>💡 <strong>Tip:</strong> Get coordinates from Google Maps:</p>
+                    <ol>
+                        <li>Go to <a href="https://maps.google.com" target="_blank">Google Maps</a></li>
+                        <li>Right-click on any location</li>
+                        <li>Select "What's here?"</li>
+                        <li>Copy the coordinates</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closePositionModal()">Cancel</button>
+                <button class="btn-primary" (click)="addPosition()">Add Position</button>
+            </div>
+        </div>
+    </div>
+</div>

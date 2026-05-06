@@ -1,0 +1,150 @@
+<div class="incident-container">
+    <!-- Header -->
+    <div class="incident-header">
+        <div>
+            <h1>🚨 Incident Management Center</h1>
+            <p>Report, track, and resolve city incidents in real-time</p>
+        </div>
+        <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+            {{ showCreateForm ? '− Cancel' : '+ Report New Incident' }}
+        </button>
+    </div>
+
+    <!-- Create Incident Form -->
+    <div class="form-container" *ngIf="showCreateForm">
+        <div class="form-card">
+            <h2>📝 Report New Incident</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" [(ngModel)]="newIncident.title" placeholder="e.g., Major accident on Highway 101"
+                        class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Incident Type *</label>
+                    <select [(ngModel)]="newIncident.type" class="form-control">
+                        <option *ngFor="let type of incidentTypes" [value]="type.value">
+                            {{ type.icon }} {{ type.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea [(ngModel)]="newIncident.description" rows="3"
+                        placeholder="Provide additional details about the incident..." class="form-control"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input type="number" step="any" [(ngModel)]="newIncident.latitude" placeholder="e.g., 40.7128"
+                        class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input type="number" step="any" [(ngModel)]="newIncident.longitude" placeholder="e.g., -74.0060"
+                        class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle ID (Optional)</label>
+                    <input type="number" [(ngModel)]="newIncident.vehicleId" placeholder="Associated vehicle"
+                        class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn-secondary" (click)="showCreateForm = false">Cancel</button>
+                <button class="btn-success" (click)="createIncident()" [disabled]="!newIncident.title">
+                    ✅ Submit Incident
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading incidents...</p>
+    </div>
+
+    <!-- Incidents Grid -->
+    <div class="incidents-grid" *ngIf="!loading">
+        <div class="incident-card" *ngFor="let incident of incidents">
+            <div class="incident-header-card">
+                <div class="incident-icon">{{ getIncidentTypeIcon(incident.type) }}</div>
+                <div class="incident-status">
+                    <span class="status-badge" [class]="getStatusBadgeClass(incident.status)"
+                        [style.backgroundColor]="getStatusColor(incident.status)">
+                        {{ getStatusLabel(incident.status) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="incident-body">
+                <h3>{{ incident.title }}</h3>
+                <p class="incident-type">{{ getIncidentTypeLabel(incident.type) }}</p>
+                <p class="incident-description" *ngIf="incident.description">
+                    {{ incident.description }}
+                </p>
+
+                <div class="incident-details">
+                    <div class="detail-item" *ngIf="incident.latitude">
+                        <span class="detail-icon">📍</span>
+                        <span>{{ getCoordinates(incident) }}</span>
+                    </div>
+                    <div class="detail-item" *ngIf="incident.vehicleId">
+                        <span class="detail-icon">🚗</span>
+                        <span>Vehicle #{{ incident.vehicleId }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">👤</span>
+                        <span>Reported by: User #{{ incident.reportedById }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">🆔</span>
+                        <span>ID: #{{ incident.id }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="incident-footer">
+                <button class="btn-update" (click)="openStatusModal(incident)"
+                    [disabled]="incident.status === 'RESOLVED'">
+                    🔄 Update Status
+                </button>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="incidents.length === 0">
+            <div class="empty-icon">📭</div>
+            <h3>No incidents reported</h3>
+            <p>Click "Report New Incident" to get started</p>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal-overlay" *ngIf="showStatusUpdate" (click)="closeStatusModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Update Incident Status</h2>
+                <button class="modal-close" (click)="closeStatusModal()">✕</button>
+            </div>
+
+            <div class="modal-body" *ngIf="selectedIncident">
+                <p class="modal-incident-title">{{ selectedIncident.title }}</p>
+
+                <div class="status-options">
+                    <button *ngFor="let status of statusOptions" class="status-option"
+                        [class.active]="selectedIncident.status === status.value"
+                        (click)="updateStatus(selectedIncident, status.value)" [style.borderColor]="status.color">
+                        <span class="status-option-label">{{ status.label }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

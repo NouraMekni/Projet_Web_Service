@@ -32,31 +32,32 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (res: any) => {
-        const token = res?.data?.login;
+        const login = res?.data?.login;
 
-        if (!token) {
-          alert('Login failed: No token received');
+        const token = login?.access_token;
+        const role = login?.role;
+        const email = login?.email;
+
+        if (!token || !role) {
+          alert('Login failed');
+          this.isLoading = false;
           return;
         }
 
         localStorage.setItem('token', token);
-        localStorage.setItem('email', this.email);
+        localStorage.setItem('role', role);
+        localStorage.setItem('email', email);
 
-        alert('Login successful!');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([
+          role === 'ADMIN' ? '/admin-dashboard' : '/operator-dashboard',
+        ]);
+
+        this.isLoading = false;
       },
 
       error: (err) => {
-        console.error('Login error:', err);
-
-        const message =
-          err?.graphQLErrors?.[0]?.message ||
-          'Invalid credentials or server error';
-
-        alert(message);
-      },
-
-      complete: () => {
+        console.error(err);
+        alert('Login error');
         this.isLoading = false;
       },
     });

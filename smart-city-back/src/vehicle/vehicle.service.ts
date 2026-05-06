@@ -29,4 +29,37 @@ export class VehicleService {
       },
     });
   }
+  async update(
+    id: number,
+    data: Partial<Prisma.VehicleUpdateInput>,
+  ): Promise<Vehicle> {
+    return this.prisma.vehicle.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async delete(id: number): Promise<Vehicle> {
+    // First delete all positions
+    await this.prisma.position.deleteMany({
+      where: { vehicleId: id },
+    });
+
+    // Then delete the vehicle
+    return this.prisma.vehicle.delete({
+      where: { id },
+    });
+  }
+
+  async getVehiclesByOwner(ownerId: number): Promise<Vehicle[]> {
+    return this.prisma.vehicle.findMany({
+      where: { ownerId },
+      include: {
+        positions: {
+          orderBy: { timestamp: 'desc' },
+          take: 10,
+        },
+      },
+    });
+  }
 }

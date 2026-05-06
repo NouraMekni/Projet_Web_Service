@@ -49,7 +49,6 @@ export class Vehicle {
   @Field()
   ownerId!: number;
 
-  // IMPORTANT: GraphQL only declares field
   @Field(() => [Position], { nullable: true })
   positions?: Position[];
 }

@@ -35,7 +35,6 @@ export class AuthService {
       },
     });
 
-    // ❌ NEVER return password
     return {
       id: user.id,
       email: user.email,
@@ -66,6 +65,8 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
+      email: user.email,
+      role: user.role,
     };
   }
 }

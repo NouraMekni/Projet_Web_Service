@@ -6,7 +6,8 @@
             <p>Login to access your dashboard</p>
         </div>
 
-        <form (ngSubmit)="login()">
+        <!-- Remove (ngSubmit) to avoid double submission -->
+        <div class="login-form">
             <div class="input-group">
                 <label>Email Address</label>
                 <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required
@@ -24,13 +25,13 @@
                 </div>
             </div>
 
-            <button type="submit" class="login-btn" [disabled]="isLoading">
+            <button class="login-btn" (click)="login()" [disabled]="isLoading">
                 {{ isLoading ? 'Logging in...' : 'Login' }}
             </button>
 
             <div class="register-link">
                 Don't have an account? <a routerLink="/register">Register here</a>
             </div>
-        </form>
+        </div>
     </div>
 </div>

@@ -23,7 +23,7 @@ export class AuthService {
       variables: {
         email,
         password,
-        role, // must be "OPERATOR", "ADMIN", etc.
+        role,
       },
     });
   }
@@ -32,7 +32,11 @@ export class AuthService {
     return this.apollo.mutate({
       mutation: gql`
         mutation Login($email: String!, $password: String!) {
-          login(email: $email, password: $password)
+          login(email: $email, password: $password) {
+            access_token
+            email
+            role
+          }
         }
       `,
       variables: {

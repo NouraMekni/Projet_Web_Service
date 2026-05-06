@@ -44,4 +44,10 @@ export class Incident {
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field(() => Int)
+  reportedById!: number;
+
+  @Field(() => Int, { nullable: true })
+  vehicleId?: number;
 }

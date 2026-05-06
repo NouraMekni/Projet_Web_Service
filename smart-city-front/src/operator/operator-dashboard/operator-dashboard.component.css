@@ -1,0 +1,106 @@
+/* Background */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+  color: white;
+}
+
+/* Container */
+.dashboard-container {
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+/* Grid */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Card */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: left;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  position: relative;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Icon */
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Text */
+.card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: #bbb;
+  margin-bottom: 1.5rem;
+}
+
+/* Button */
+.card button {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+/* Disabled card */
+.card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card button:disabled {
+  background: #555;
+  color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+}
