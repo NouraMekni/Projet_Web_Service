@@ -19,16 +19,15 @@ export class IncidentManagementComponent implements OnInit {
   showCreateForm = false;
   showStatusUpdate = false;
   selectedIncident: IncidentService | null = null;
-  errorMessage: string = ''; // ✅ Add error handling
+  errorMessage: string = '';
 
-  // Form models
   newIncident = {
     title: '',
     type: 'ACCIDENT' as const,
     description: '',
     latitude: null as number | null,
     longitude: null as number | null,
-    reportedById: 1, // Make sure this user exists in your database!
+    reportedById: 1,
     vehicleId: null as number | null,
   };
 
@@ -71,7 +70,6 @@ export class IncidentManagementComponent implements OnInit {
         this.incidents = data;
         this.loading = false;
 
-        // ✅ Show message if no incidents
         if (data.length === 0) {
           console.log('No incidents found in database');
         }
@@ -86,13 +84,11 @@ export class IncidentManagementComponent implements OnInit {
   }
 
   createIncident() {
-    // ✅ Validate required fields
     if (!this.newIncident.title) {
       console.error('Title is required');
       return;
     }
 
-    // ✅ Validate that reportedById exists
     if (!this.newIncident.reportedById) {
       console.error('ReportedBy ID is required');
       return;
@@ -113,7 +109,7 @@ export class IncidentManagementComponent implements OnInit {
     this.graphqlService.createIncident(input).subscribe({
       next: (response) => {
         console.log('Incident created successfully:', response);
-        this.loadIncidents(); // Reload to get updated list
+        this.loadIncidents();
         this.resetForm();
         this.showCreateForm = false;
       },
@@ -131,7 +127,7 @@ export class IncidentManagementComponent implements OnInit {
     this.graphqlService.updateIncidentStatus(incident.id, newStatus).subscribe({
       next: (response) => {
         console.log('Status updated successfully:', response);
-        this.loadIncidents(); // Reload to get updated list
+        this.loadIncidents();
         this.closeStatusModal();
       },
       error: (error) => {
@@ -158,7 +154,7 @@ export class IncidentManagementComponent implements OnInit {
       description: '',
       latitude: null,
       longitude: null,
-      reportedById: 1, // Make sure this user exists!
+      reportedById: 1,
       vehicleId: null,
     };
   }

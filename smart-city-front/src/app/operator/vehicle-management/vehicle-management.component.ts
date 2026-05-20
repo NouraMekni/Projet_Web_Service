@@ -121,7 +121,6 @@ export class VehicleManagementComponent implements OnInit {
     this.showEditModal = false;
     this.selectedVehicle = null;
   }
-
   updateVehicle() {
     if (
       !this.editVehicle.brand ||
@@ -133,9 +132,10 @@ export class VehicleManagementComponent implements OnInit {
     }
 
     this.isLoading = true;
+
     this.vehicleService
       .updateVehicle(
-        this.editVehicle.id!,
+        Number(this.editVehicle.id),
         this.editVehicle.brand,
         this.editVehicle.model,
         this.editVehicle.licensePlate,
@@ -148,8 +148,10 @@ export class VehicleManagementComponent implements OnInit {
           this.isLoading = false;
         },
         error: (err) => {
-          console.error('Error updating vehicle:', err);
-          alert('Failed to update vehicle');
+          console.log('FULL ERROR =>', err);
+
+          console.log('GRAPHQL MESSAGE =>', err.error?.errors?.[0]?.message);
+
           this.isLoading = false;
         },
       });

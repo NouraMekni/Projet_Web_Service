@@ -1,12 +1,17 @@
 import { Resolver, Query, Mutation, Args, Context, Int } from '@nestjs/graphql';
 import { UseGuards, ForbiddenException } from '@nestjs/common';
+
 import { Vehicle } from './vehicle.entity';
 import { VehicleService } from './vehicle.service';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { NotifService } from '../notif_Socket/notif.service';
 
 @Resolver(() => Vehicle)
 export class VehicleResolver {
-  constructor(private vehicleService: VehicleService) {}
+  constructor(
+    private vehicleService: VehicleService,
+    private notifService: NotifService,
+  ) {}
 
   @Query(() => [Vehicle])
   async vehicles() {
@@ -28,12 +33,18 @@ export class VehicleResolver {
   ) {
     const user = context.req.user;
 
-    return this.vehicleService.create({
+    const createdVehicle = await this.vehicleService.create({
       brand,
       model,
       licensePlate,
       ownerId: user.sub,
     });
+
+    await this.notifService.notifyAdmins(
+      `🚗 New vehicle added: ${brand} ${model} (${licensePlate})`,
+    );
+
+    return createdVehicle;
   }
 
   @Mutation(() => Boolean)
@@ -46,8 +57,6 @@ export class VehicleResolver {
     return true;
   }
 
-  // Add these to your VehicleResolver class
-
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Vehicle)
   async updateVehicle(
@@ -59,13 +68,23 @@ export class VehicleResolver {
   ) {
     const user = context.req.user;
 
-    // Check if vehicle belongs to user
     const vehicle = await this.vehicleService.getVehicleById(id);
+
     if (!vehicle || vehicle.ownerId !== user.sub) {
       throw new ForbiddenException("You don't own this vehicle");
     }
 
-    return this.vehicleService.update(id, { brand, model, licensePlate });
+    const updatedVehicle = await this.vehicleService.update(id, {
+      brand,
+      model,
+      licensePlate,
+    });
+
+    await this.notifService.notifyAdmins(
+      `✏️ Vehicle updated: ${brand} ${model} (${licensePlate})`,
+    );
+
+    return updatedVehicle;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -76,13 +95,18 @@ export class VehicleResolver {
   ) {
     const user = context.req.user;
 
-    // Check if vehicle belongs to user
     const vehicle = await this.vehicleService.getVehicleById(id);
+
     if (!vehicle || vehicle.ownerId !== user.sub) {
       throw new ForbiddenException("You don't own this vehicle");
     }
 
+    const vehicleInfo = `${vehicle.brand} ${vehicle.model} (${vehicle.licensePlate})`;
+
     await this.vehicleService.delete(id);
+
+    await this.notifService.notifyAdmins(`🗑️ Vehicle deleted: ${vehicleInfo}`);
+
     return true;
   }
 }

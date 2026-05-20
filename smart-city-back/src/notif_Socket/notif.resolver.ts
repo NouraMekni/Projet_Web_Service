@@ -6,7 +6,6 @@ import { Notif } from './entities/notif.entity';
 export class NotifResolver {
   constructor(private notifService: NotifService) {}
 
-  // 📌 Send notification
   @Mutation(() => Notif)
   async sendNotif(
     @Args('message') message: string,
@@ -15,7 +14,6 @@ export class NotifResolver {
     return this.notifService.create(message, userId);
   }
 
-  // 📌 Get notifications
   @Query(() => [Notif])
   async notifs(
     @Args('userId', { type: () => Int, nullable: true })
@@ -24,7 +22,6 @@ export class NotifResolver {
     return this.notifService.findAll(userId);
   }
 
-  // 📌 Mark as read
   @Mutation(() => Notif)
   async readNotif(@Args('id', { type: () => Int }) id: number) {
     return this.notifService.markAsRead(id);

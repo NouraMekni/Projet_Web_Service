@@ -21,6 +21,7 @@ model User {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   incidents Incident[]
+  notifications Notification[]
 }
 
 enum VehicleStatus {
@@ -109,4 +110,6 @@ model Notification {
   userId    Int
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }

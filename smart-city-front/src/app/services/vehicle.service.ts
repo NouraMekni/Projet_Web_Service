@@ -10,7 +10,6 @@ import { HttpHeaders } from '@angular/common/http';
 export class VehicleService {
   constructor(private apollo: Apollo) {}
 
-  // 🔐 helper to get auth headers
   private getAuthHeaders() {
     const token = localStorage.getItem('token');
 

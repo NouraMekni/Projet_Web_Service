@@ -16,7 +16,6 @@ export class AuthService {
   ) {}
 
   async register(email: string, password: string, role: Role) {
-    // check if user exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });

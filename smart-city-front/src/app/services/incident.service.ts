@@ -21,7 +21,6 @@ export interface IncidentService {
 export class GraphqlService {
   constructor(private apollo: Apollo) {}
 
-  // Get all incidents - FIXED: Added proper error handling and field mapping
   getIncidents(): Observable<IncidentService[]> {
     const GET_INCIDENTS = gql`
       query GetIncidents {
@@ -42,7 +41,7 @@ export class GraphqlService {
     return this.apollo
       .watchQuery<any>({
         query: GET_INCIDENTS,
-        fetchPolicy: 'network-only', // ✅ Force fresh data from server
+        fetchPolicy: 'network-only',
       })
       .valueChanges.pipe(
         map((result) => {
@@ -52,7 +51,6 @@ export class GraphqlService {
       );
   }
 
-  // Create new incident - FIXED: Ensure proper response handling
   createIncident(input: {
     title: string;
     type: string;
@@ -126,7 +124,6 @@ export class GraphqlService {
       );
   }
 
-  // Update incident status - FIXED: Proper error handling
   updateIncidentStatus(
     id: number,
     status: string,

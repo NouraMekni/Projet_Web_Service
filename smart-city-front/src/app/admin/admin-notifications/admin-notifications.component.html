@@ -1,0 +1,28 @@
+<div class="notifications-container">
+
+    <h2 class="title">
+        🔔 Notifications
+        <span class="badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+    </h2>
+
+    <p *ngIf="notifications.length === 0" class="empty-state">
+        No notifications yet.
+    </p>
+
+    <div class="notifications-list">
+
+        <div class="notification-card" [class.unread]="!notif.isRead" *ngFor="let notif of notifications">
+            <div class="notification-content">
+                <p class="message">{{ notif.message }}</p>
+                <small class="date">{{ notif.createdAt | date: 'medium' }}</small>
+            </div>
+
+            <button class="btn-read" *ngIf="!notif.isRead" (click)="markAsRead(notif.id)">
+                Mark as read
+            </button>
+
+            <span *ngIf="notif.isRead" class="read-badge">✔ Read</span>
+        </div>
+
+    </div>
+</div>

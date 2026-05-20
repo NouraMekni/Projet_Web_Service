@@ -11,18 +11,16 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  // 🔥 ADMIN
   {
     path: 'admin-dashboard',
     loadComponent: () =>
-      import('./admin-dashboard/admin-dashboard.component').then(
+      import('./admin/admin-dashboard/admin-dashboard.component').then(
         (m) => m.AdminDashboardComponent,
       ),
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'ADMIN' },
   },
 
-  // 🔥 OPERATOR
   {
     path: 'operator-dashboard',
     loadComponent: () =>
@@ -33,7 +31,6 @@ export const routes: Routes = [
     data: { role: 'OPERATOR' },
   },
 
-  // 🔥 Vehicle Management (Nested under operator)
   {
     path: 'operator/vehicles',
     loadComponent: () =>
@@ -44,7 +41,22 @@ export const routes: Routes = [
     data: { role: 'OPERATOR' },
   },
 
-  { path: 'operator/incidents', component: IncidentManagementComponent },
+  {
+    path: 'admin-notifications',
+    loadComponent: () =>
+      import('./admin/admin-notifications/admin-notifications.component').then(
+        (m) => m.AdminNotificationsComponent,
+      ),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'ADMIN' },
+  },
+
+  {
+    path: 'operator/incidents',
+    component: IncidentManagementComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'OPERATOR' },
+  },
 
   { path: '**', redirectTo: 'login' },
 ];

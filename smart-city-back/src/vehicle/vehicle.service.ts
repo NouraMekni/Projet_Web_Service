@@ -1,22 +1,36 @@
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, VehicleStatus, Vehicle } from '@prisma/client';
+
+import { Prisma, Vehicle, VehicleStatus } from '@prisma/client';
 
 @Injectable()
 export class VehicleService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: Prisma.VehicleCreateInput): Promise<Vehicle> {
-    return this.prisma.vehicle.create({ data });
+    return this.prisma.vehicle.create({
+      data: {
+        ...data,
+        status: VehicleStatus.PARKED,
+      },
+    });
   }
 
   async findAll(): Promise<Vehicle[]> {
-    return this.prisma.vehicle.findMany();
+    return this.prisma.vehicle.findMany({
+      include: {
+        positions: true,
+      },
+    });
   }
 
   async getVehicleById(id: number): Promise<Vehicle | null> {
     return this.prisma.vehicle.findUnique({
       where: { id },
+      include: {
+        positions: true,
+      },
     });
   }
 
@@ -29,6 +43,7 @@ export class VehicleService {
       },
     });
   }
+
   async update(
     id: number,
     data: Partial<Prisma.VehicleUpdateInput>,
@@ -40,12 +55,12 @@ export class VehicleService {
   }
 
   async delete(id: number): Promise<Vehicle> {
-    // First delete all positions
     await this.prisma.position.deleteMany({
-      where: { vehicleId: id },
+      where: {
+        vehicleId: id,
+      },
     });
 
-    // Then delete the vehicle
     return this.prisma.vehicle.delete({
       where: { id },
     });
@@ -53,10 +68,14 @@ export class VehicleService {
 
   async getVehiclesByOwner(ownerId: number): Promise<Vehicle[]> {
     return this.prisma.vehicle.findMany({
-      where: { ownerId },
+      where: {
+        ownerId,
+      },
       include: {
         positions: {
-          orderBy: { timestamp: 'desc' },
+          orderBy: {
+            timestamp: 'desc',
+          },
           take: 10,
         },
       },

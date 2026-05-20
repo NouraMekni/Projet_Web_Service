@@ -11,7 +11,7 @@ import { InMemoryCache } from '@apollo/client/core';
       useFactory: (httpLink: HttpLink) => {
         return {
           link: httpLink.create({
-            uri: 'http://localhost:3000/graphql', // change if needed
+            uri: 'http://localhost:3000/graphql',
           }),
           cache: new InMemoryCache(),
         };

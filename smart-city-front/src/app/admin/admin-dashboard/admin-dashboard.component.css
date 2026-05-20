@@ -1,0 +1,50 @@
+.dashboard-container {
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: gray;
+  margin-bottom: 30px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  text-decoration: none;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  color: black;
+  border: 1px solid #eee;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 0;
+  color: #666;
+}

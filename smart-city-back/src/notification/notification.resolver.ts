@@ -6,7 +6,6 @@ import { Notification } from '../notification/entities/notification.entity';
 export class NotificationResolver {
   constructor(private notificationService: NotificationService) {}
 
-  // 📌 Send notification
   @Mutation(() => Notification)
   async sendNotification(
     @Args('message') message: string,
@@ -15,7 +14,6 @@ export class NotificationResolver {
     return this.notificationService.create(message, userId);
   }
 
-  // 📌 Get notifications
   @Query(() => [Notification])
   async notifications(
     @Args('userId', { type: () => Int, nullable: true }) userId?: number,

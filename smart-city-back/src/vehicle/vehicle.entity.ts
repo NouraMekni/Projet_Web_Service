@@ -6,13 +6,11 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-export enum VehicleStatus {
-  IN_TRAFFIC = 'IN_TRAFFIC',
-  PARKED = 'PARKED',
-  MAINTENANCE = 'MAINTENANCE',
-}
+import { VehicleStatus } from '@prisma/client';
 
-registerEnumType(VehicleStatus, { name: 'VehicleStatus' });
+registerEnumType(VehicleStatus, {
+  name: 'VehicleStatus',
+});
 
 @ObjectType()
 export class Position {
@@ -43,8 +41,8 @@ export class Vehicle {
   @Field()
   licensePlate!: string;
 
-  @Field(() => VehicleStatus)
-  status!: VehicleStatus;
+  @Field(() => VehicleStatus, { nullable: true })
+  status?: VehicleStatus;
 
   @Field()
   ownerId!: number;

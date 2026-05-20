@@ -1,27 +1,32 @@
 import {
   WebSocketGateway,
   WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
+
 import { Server, Socket } from 'socket.io';
+
 @WebSocketGateway({
-  cors: { origin: '*' },
+  cors: {
+    origin: '*',
+  },
 })
-export class NotifGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class NotifGateway {
   @WebSocketServer()
   server!: Server;
 
-  handleConnection(client: Socket) {
-    console.log(`🔌 Connected: ${client.id}`);
-  }
+  @SubscribeMessage('join')
+  handleJoin(
+    @MessageBody() data: { userId: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const room = `user_${data.userId}`;
 
-  handleDisconnect(client: Socket) {
-    console.log(`❌ Disconnected: ${client.id}`);
-  }
+    client.join(room);
 
-  sendNotification(notification: any) {
-    this.server.emit('notification', notification);
+    client.emit('joined', { room });
   }
 
   sendToUser(userId: number, notification: any) {

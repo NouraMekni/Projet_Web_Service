@@ -9,7 +9,6 @@ export class NotifService {
     private gateway: NotifGateway,
   ) {}
 
-  // 📌 Create + send real-time notification
   async create(message: string, userId: number) {
     const notif = await this.prisma.notification.create({
       data: {
@@ -18,25 +17,36 @@ export class NotifService {
       },
     });
 
-    // 🚀 REAL-TIME PUSH
-    this.gateway.sendNotification(notif);
+    this.gateway.sendToUser(userId, notif);
 
     return notif;
   }
 
-  // 📌 Get all notifications
   async findAll(userId?: number) {
     return this.prisma.notification.findMany({
       where: userId ? { userId } : undefined,
-      orderBy: { createdAt: 'desc' },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
-  // 📌 Mark as read
   async markAsRead(id: number) {
     return this.prisma.notification.update({
       where: { id },
-      data: { isRead: true },
+      data: {
+        isRead: true,
+      },
     });
+  }
+
+  async notifyAdmins(message: string) {
+    const admins = await this.prisma.user.findMany({
+      where: {
+        role: 'ADMIN',
+      },
+    });
+
+    await Promise.all(admins.map((admin) => this.create(message, admin.id)));
   }
 }
